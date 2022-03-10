@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "description": "基于 Edge 与 .NET 的 OneNet 物联网设备仪表板实验项目",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langyo/OneNetSerialDashboardDemoEnterprise.git"
+  },
+  "author": "langyo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/langyo/OneNetSerialDashboardDemoEnterprise/issues"
+  },
+  "homepage": "https://github.com/langyo/OneNetSerialDashboardDemoEnterprise#readme",
+  "dependencies": {
+    "vue": "^3.2.31"
+  }
+}
