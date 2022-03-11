@@ -2,7 +2,8 @@
   "private": true,
   "description": "基于 Edge 与 .NET 的 OneNet 物联网设备仪表板实验项目",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-cs": "dotnet build ./builder.csproj --nologo -r win-x64 --self-contained=true -o ./bin/",
+    "publish-cs": "dotnet publish ./builder.csproj --nologo -r win-x64 --self-contained=true /p:PublishSingleFile=true -o ./dist/publish/win-unpacked/bin/"
   },
   "repository": {
     "type": "git",

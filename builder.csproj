@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.IO.Ports" Version="7.0.0-preview.1.22076.8" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1158-prerelease" />
+  </ItemGroup>
+
+  <!-- <ItemGroup>
+    <Resource Include="dist\web.bundle.js" />
+  </ItemGroup> -->
+
+</Project>
