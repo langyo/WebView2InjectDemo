@@ -12,8 +12,8 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1158-prerelease" />
   </ItemGroup>
 
-  <!-- <ItemGroup>
-    <Resource Include="dist\web.bundle.js" />
-  </ItemGroup> -->
+  <ItemGroup>
+    <Resource Include="dist\build\web.js" />
+  </ItemGroup>
 
 </Project>

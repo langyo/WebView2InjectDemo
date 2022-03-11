@@ -17,10 +17,16 @@ export async function clean() {
   } catch {}
 }
 
-function buildScript(options: webpack.Configuration) {
-  return new Promise<void>((resolve, reject) =>
+export const build = series(async function buildScripts() {
+  return await new Promise<void>((resolve, reject) =>
     webpack(
       {
+        entry: join(__dirname, './src/frontend/entry.ts'),
+        target: 'web',
+        output: {
+          filename: 'web.js',
+          path: join(__dirname, './dist/build/'),
+        },
         context: __dirname,
         module: {
           rules: [
@@ -35,8 +41,8 @@ function buildScript(options: webpack.Configuration) {
             {
               test: /\.ts$/,
               loader: 'ts-loader',
-              options: { appendTsSuffixTo: [/\.vue$/] }
-            }
+              options: { appendTsSuffixTo: [/\.vue$/] },
+            },
           ],
         },
         optimization: {
@@ -56,7 +62,6 @@ function buildScript(options: webpack.Configuration) {
           ? { devtool: 'inline-source-map' }
           : {}),
         plugins: [new VueLoaderPlugin()],
-        ...options,
       },
       (err, stats) => {
         if (err) {
@@ -80,44 +85,7 @@ function buildScript(options: webpack.Configuration) {
       }
     )
   );
-}
-
-export const build = series(
-  async function buildScripts() {
-    await buildScript({
-      entry: join(__dirname, './src/frontend/entry.ts'),
-      target: 'web',
-      output: {
-        filename: 'web.js',
-        path: join(__dirname, './dist/build/'),
-      },
-    });
-  },
-
-  async function writeHTMLFile() {
-    return await writeFile(
-      join(__dirname, './dist/build/index.html'),
-      `
-<html>
-<head lang="zh-cn">
-  <meta charset="utf-8">
-  <title>Demo</title>
-  <style>
-html, body, * {
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
-}
-  </style>
-</head>
-<body>
-  <div id="app"></div>
-  <script src="web.js"></script>
-</body>
-</html>`
-    );
-  }
-);
+});
 
 export const postPublish = series(
   async function removeNETInfoFiles() {

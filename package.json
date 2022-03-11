@@ -9,7 +9,7 @@
     "publish": "cross-env NODE_ENV=production gulp clean && npm run publish-ts && npm run publish-cs && gulp postPublish",
     "publish-ts": "gulp build",
     "publish-cs": "dotnet publish ./builder.csproj --nologo -r win-x64 --self-contained=true /p:PublishSingleFile=true -o ./dist/publish/win-unpacked/bin/",
-    "start": "electron ./dist/build/index.js"
+    "start": "./bin/builder.exe"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,9 @@
 <template>
-  <div class="hello">
+  <div class='hello'>
     <h1>{{ msg }}</h1>
+    <button onclick='window.chrome.webview.postMessage("terminate")'>
+      close
+    </button>
   </div>
 </template>
 

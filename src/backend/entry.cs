@@ -1,6 +1,6 @@
 using System;
+using System.IO;
 using System.Windows.Forms;
-using Microsoft.Web.WebView2.Core;
 
 namespace Demo
 {
@@ -18,15 +18,14 @@ namespace Demo
       this.webView2Control.Name = "webView2Control";
       this.webView2Control.Size = new System.Drawing.Size(800, 600);
       this.webView2Control.DefaultBackgroundColor = System.Drawing.Color.Transparent;
-      this.webView2Control.Source = new Uri("data:text/html,<style>html, body { background: transparent; border: 3px solid red; } button { border: 1px solid black; outlined: none; border-radius: 4px; min-height: 32px; font-size: 20px; }</style><button onclick=\"window.chrome.webview.postMessage('terminate')\">close</button>", UriKind.Absolute);
-      this.webView2Control.NavigationCompleted
-          += (sender, e) =>
-          {
-            this.webView2Control.ExecuteScriptAsync("alert('The connection has been generated.')").ContinueWith((task) =>
-            {
-              // MessageBox.Show($"Output: {task.Result}");
-            });
-          };
+
+      string sourceCode = (new StreamReader(typeof(Program).Assembly.GetManifestResourceStream(typeof(Program).Assembly.GetManifestResourceNames()[0]))).ReadToEnd();
+      this.webView2Control.Source = new Uri("data:text/html, <h1>test</h1>");
+      this.webView2Control.EnsureCoreWebView2Async().ContinueWith(task =>
+      {
+        this.webView2Control.NavigateToString($"<script>{sourceCode}</script>");
+      });
+
       this.webView2Control.WebMessageReceived
           += (sender, e) =>
           {
