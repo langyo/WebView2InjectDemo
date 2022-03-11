@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "esModuleInterop": true
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "jsx": "preserve",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true
   }
 }
