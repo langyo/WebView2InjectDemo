@@ -19,12 +19,15 @@ namespace Demo
       this.webView2Control.Size = new System.Drawing.Size(800, 600);
       this.webView2Control.DefaultBackgroundColor = System.Drawing.Color.Transparent;
 
-      string sourceCode = (new StreamReader(typeof(Program).Assembly.GetManifestResourceStream(typeof(Program).Assembly.GetManifestResourceNames()[0]))).ReadToEnd();
-      this.webView2Control.Source = new Uri("data:text/html, <h1>test</h1>");
-      this.webView2Control.EnsureCoreWebView2Async().ContinueWith(task =>
-      {
-        this.webView2Control.NavigateToString($"<script>{sourceCode}</script>");
-      });
+      this.webView2Control.Source = new Uri("data:text/html,<style>html,body{margin: 0px;padding: 0px;}</style><body></body>");
+      this.webView2Control.NavigationCompleted
+        += async (sender, e) =>
+        {
+          await this.webView2Control.ExecuteScriptAsync(await (new StreamReader(
+            typeof(Program).Assembly.GetManifestResourceStream(
+              typeof(Program).Assembly.GetManifestResourceNames()[0])
+            )).ReadToEndAsync());
+        };
 
       this.webView2Control.WebMessageReceived
           += (sender, e) =>
@@ -33,6 +36,9 @@ namespace Demo
             {
               case "terminate":
                 this.Close();
+                break;
+              default:
+                Console.WriteLine(e.TryGetWebMessageAsString());
                 break;
             }
           };

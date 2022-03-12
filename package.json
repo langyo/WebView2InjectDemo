@@ -23,6 +23,7 @@
   "homepage": "https://github.com/langyo/OneNetSerialDashboardDemoEnterprise#readme",
   "dependencies": {
     "core-js": "^3.6.5",
+    "element-plus": "^2.0.6",
     "shortid": "^2.2.16",
     "vue": "^3.0.0"
   },

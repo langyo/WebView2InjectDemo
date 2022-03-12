@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <LangVersion>preview</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
@@ -13,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="dist\build\web.js" />
+    <EmbeddedResource Include="dist\build\web.js" />
   </ItemGroup>
 
 </Project>
