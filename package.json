@@ -1,6 +1,6 @@
 {
   "private": true,
-  "description": "基于 Edge 与 .NET 的 OneNet 物联网设备仪表板实验项目",
+  "description": "基于 Edge WebView2 与 .NET 的 OneNet 物联网设备仪表板实验项目",
   "scripts": {
     "clean": "gulp clean",
     "build": "gulp clean && npm run build-ts && npm run build-cs",
@@ -13,14 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/langyo/OneNetSerialDashboardDemoEnterprise.git"
+    "url": "git+https://github.com/langyo/WebView2InjectDemo.git"
   },
   "author": "langyo",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/langyo/OneNetSerialDashboardDemoEnterprise/issues"
-  },
-  "homepage": "https://github.com/langyo/OneNetSerialDashboardDemoEnterprise#readme",
   "dependencies": {
     "core-js": "^3.6.5",
     "element-plus": "^2.0.6",
