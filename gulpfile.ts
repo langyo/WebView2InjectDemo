@@ -1,9 +1,45 @@
 import { series } from 'gulp';
-import { join } from 'path';
 import del from 'del';
 import webpack from 'webpack';
 import { VueLoaderPlugin } from 'vue-loader';
-import { readFile, writeFile, symlink, unlink, readdir } from 'fs/promises';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import { generate } from 'shortid';
+import { join } from 'path';
+import { readdir, unlink, writeFile, readFile } from 'fs/promises';
+
+const isDevelopmentMode = process.argv.indexOf('--dev') >= 0;
+console.log(
+  `You are in the ${isDevelopmentMode ? 'development' : 'production'} mode.`
+);
+const compileId = generate();
+console.log(
+  `The unique identification code for this compilation is '${compileId}'.`
+);
+
+function resolveWebpackCompileResult(
+  resolve: (sth: any) => void,
+  reject: (sth: any) => void
+) {
+  return (err: Error, stats: webpack.Stats) => {
+    if (err) {
+      console.error(err);
+      reject(err);
+    }
+    const info = stats.toJson();
+    if (stats.hasErrors()) {
+      for (let line of info.errors) {
+        console.error(line.message);
+        reject(err);
+      }
+    }
+    if (stats.hasWarnings()) {
+      for (let line of info.warnings) {
+        console.warn(line.message);
+      }
+    }
+    resolve(stats);
+  };
+}
 
 export async function clean() {
   try {
@@ -17,75 +53,83 @@ export async function clean() {
   } catch {}
 }
 
-export const build = series(async function buildScripts() {
-  return await new Promise<void>((resolve, reject) =>
-    webpack(
-      {
-        entry: join(__dirname, './src/frontend/entry.ts'),
-        target: 'web',
-        output: {
-          filename: 'web.js',
-          path: join(__dirname, './dist/build/'),
-        },
-        context: __dirname,
-        module: {
-          rules: [
-            {
-              test: /\.vue$/,
-              loader: 'vue-loader',
-            },
-            {
-              test: /\.scss$/,
-              use: ['vue-style-loader', 'css-loader', 'sass-loader'],
-            },
-            {
-              test: /\.ts$/,
-              loader: 'ts-loader',
-              options: { appendTsSuffixTo: [/\.vue$/] },
-            },
-          ],
-        },
-        optimization: {
-          minimize: true,
-          minimizer: [
-            new (require('terser-webpack-plugin'))({
-              extractComments: false,
-            }),
-          ],
-        },
-        resolve: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
-        },
-        mode:
-          process.env.NODE_ENV === 'development' ? 'development' : 'production',
-        ...(process.env.NODE_ENV === 'development'
-          ? { devtool: 'inline-source-map' }
-          : {}),
-        plugins: [new VueLoaderPlugin()],
+async function generateMainlyScripts() {
+  await new Promise((resolve, reject) => {
+    const compiler = webpack({
+      entry: join(__dirname, './src/frontend/entry.ts'),
+      target: 'web',
+      output: {
+        filename: 'web.js',
+        path: join(__dirname, './dist/build/'),
       },
-      (err, stats) => {
-        if (err) {
-          reject(err);
-        } else if (stats?.hasErrors()) {
-          const info = stats.toJson();
-          let errStr = '';
-          if (stats.hasErrors() && typeof info.errors !== 'undefined') {
-            for (const e of info.errors) {
-              errStr += `${e.message}\n`;
-            }
-          }
-          if (stats.hasWarnings() && typeof info.warnings !== 'undefined') {
-            for (const e of info.warnings) {
-              errStr += `${e.message}\n`;
-            }
-          }
-          reject(Error(errStr));
-        }
-        resolve();
-      }
+      context: __dirname,
+      module: {
+        rules: [
+          {
+            test: /\.vue$/,
+            use: 'vue-loader',
+          },
+          {
+            test: /\.tsx?$/,
+            use: [
+              {
+                loader: 'ts-loader',
+                options: { appendTsSuffixTo: [/\.vue$/] },
+              },
+            ],
+          },
+          {
+            test: /\.css$/,
+            use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          },
+          {
+            test: /\.scss$/,
+            use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+          },
+        ],
+      },
+      plugins: [
+        new MiniCssExtractPlugin({
+          filename: 'web.css',
+        }),
+        new VueLoaderPlugin(),
+      ],
+      optimization: {
+        minimize: true,
+        minimizer: [
+          new (require('terser-webpack-plugin'))({
+            extractComments: false,
+          }),
+        ],
+      },
+      resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
+      },
+      mode:
+        process.env.NODE_ENV === 'development' ? 'development' : 'production',
+      ...(process.env.NODE_ENV === 'development'
+        ? { devtool: 'inline-source-map' }
+        : {}),
+    });
+    compiler.run(resolveWebpackCompileResult(resolve, reject));
+  });
+}
+
+async function concatStyleSheets() {
+  await writeFile(
+    join(__dirname, './dist/build/web.css.js'),
+    `(() => {
+let n = document.createElement('style');
+n.innerText = \`${(
+      await readFile(join(__dirname, './dist/build/web.css'), 'utf8')
     )
+      .split('`')
+      .join('\\`')}\`;
+document.body.appendChild(n);
+document.getElementById('app').hidden="";
+})();`
   );
-});
+}
 
 export const postPublish = series(
   async function removeNETInfoFiles() {
@@ -101,3 +145,7 @@ export const postPublish = series(
     }
   }
 );
+
+export const build = series(clean, generateMainlyScripts, concatStyleSheets);
+
+export const publish = series(build, postPublish);

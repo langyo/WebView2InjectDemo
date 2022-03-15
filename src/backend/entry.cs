@@ -23,17 +23,28 @@ namespace Demo
       this.webView2Control.NavigationCompleted
         += async (sender, e) =>
         {
-          await this.webView2Control.ExecuteScriptAsync(await (new StreamReader(
-            typeof(Program).Assembly.GetManifestResourceStream(
-              typeof(Program).Assembly.GetManifestResourceNames()[0])
-            )).ReadToEndAsync());
+          foreach (var name in typeof(Program).Assembly.GetManifestResourceNames())
+          {
+            var content = await (new StreamReader(
+              typeof(Program).Assembly.GetManifestResourceStream(
+                name)
+              )).ReadToEndAsync();
+            if (name.Substring(name.LastIndexOf('.')) == ".js")
+            {
+              await this.webView2Control.ExecuteScriptAsync(content);
+            };
+          }
         };
 
       this.webView2Control.WebMessageReceived
-          += (sender, e) =>
+          += async (sender, e) =>
           {
             switch (e.TryGetWebMessageAsString())
             {
+              case "openDevTools":
+                await this.webView2Control.EnsureCoreWebView2Async();
+                this.webView2Control.CoreWebView2.OpenDevToolsWindow();
+                break;
               case "terminate":
                 this.Close();
                 break;

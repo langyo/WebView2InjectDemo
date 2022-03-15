@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="dist\build\web.js" />
+    <EmbeddedResource Include="dist\build\web.css.js" />
   </ItemGroup>
 
 </Project>

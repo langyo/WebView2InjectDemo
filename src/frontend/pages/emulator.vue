@@ -1,9 +1,8 @@
 <template>
-  <div class='hello'>
+  <div class="hello">
     <h1>{{ msg }}</h1>
-    <button onclick='window.chrome.webview.postMessage("terminate")'>
-      close
-    </button>
+    <el-button @click="openDevTools"> Open Dev Tools </el-button>
+    <el-button @click="close"> Close </el-button>
   </div>
 </template>
 
@@ -14,6 +13,14 @@ export default defineComponent({
   name: 'Emulator',
   props: {
     msg: String,
+  },
+  methods: {
+    openDevTools() {
+      window['chrome'].webview.postMessage('openDevTools');
+    },
+    close() {
+      window['chrome'].webview.postMessage('terminate');
+    },
   },
 });
 </script>

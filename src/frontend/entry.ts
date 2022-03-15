@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
 import App from './entry.vue';
 
 try {
@@ -8,16 +9,9 @@ try {
   <head lang="zh-cn">
     <meta charset="utf-8">
     <title>Demo</title>
-    <style>
-  html, body, * {
-    margin: 0px;
-    padding: 0px;
-    box-sizing: border-box;
-  }
-    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" hidden></div>
   </body>
   </html>
   `);
