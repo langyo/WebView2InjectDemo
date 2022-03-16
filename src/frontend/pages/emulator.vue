@@ -25,7 +25,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 h1 {
   color: green;
 }

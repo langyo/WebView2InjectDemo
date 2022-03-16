@@ -131,6 +131,20 @@ document.getElementById('app').hidden="";
   );
 }
 
+async function generateDebugHTMLFile() {
+  await writeFile(join(__dirname, './dist/build/index.html'), `
+<head>
+<meta charset=\"utf-8\">
+</head>
+<body>
+  <div id=\"app\" hidden>
+  </div>
+  <script src="web.js"></script>
+  <script src="web.css.js"></script>
+</body>
+  `);
+}
+
 export const postPublish = series(
   async function removeNETInfoFiles() {
     await unlink(
@@ -146,6 +160,6 @@ export const postPublish = series(
   }
 );
 
-export const build = series(clean, generateMainlyScripts, concatStyleSheets);
+export const build = series(generateMainlyScripts, concatStyleSheets, generateDebugHTMLFile);
 
-export const publish = series(build, postPublish);
+export const publish = series(clean, build, postPublish);

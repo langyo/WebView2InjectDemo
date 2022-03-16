@@ -19,7 +19,7 @@ namespace Demo
       this.webView2Control.Size = new System.Drawing.Size(800, 600);
       this.webView2Control.DefaultBackgroundColor = System.Drawing.Color.Transparent;
 
-      this.webView2Control.Source = new Uri("data:text/html,<style>html,body{margin: 0px;padding: 0px;}</style><body></body>");
+      this.webView2Control.Source = new Uri("data:text/html,<head><meta charset=\"utf-8\"></head><body><div id=\"app\" hidden></div></body>");
       this.webView2Control.NavigationCompleted
         += async (sender, e) =>
         {
